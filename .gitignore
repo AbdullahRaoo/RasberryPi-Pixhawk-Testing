@@ -1,0 +1,18 @@
+# Raspberry Pi + Pixhawk Setup Files
+*.log
+*.pyc
+__pycache__/
+.DS_Store
+.vscode/
+*.swp
+*.swo
+*~
+.pytest_cache/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+/SETUP_GUIDE.md
+/WIRING_GUIDE.md
