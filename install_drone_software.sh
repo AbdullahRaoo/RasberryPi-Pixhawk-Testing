@@ -46,7 +46,7 @@ fi
 
 # Check Raspberry Pi model
 if [ -f /proc/device-tree/model ]; then
-    RPI_MODEL=$(cat /proc/device-tree/model)
+    RPI_MODEL=$(tr -d '\0' < /proc/device-tree/model)
     echo -e "${BLUE}Detected: $RPI_MODEL${NC}"
     log "Raspberry Pi model: $RPI_MODEL"
 fi
@@ -92,10 +92,34 @@ log "Python version: $PYTHON_VERSION"
 
 echo -e "${GREEN}[3/8] Installing MAVProxy and PyMAVLink...${NC}"
 log "Installing MAVProxy and PyMAVLink"
-if ! sudo pip3 install --upgrade pymavlink MAVProxy >> "$LOG_FILE" 2>&1; then
-    echo -e "${RED}Failed to install MAVProxy${NC}"
-    log "ERROR: MAVProxy installation failed"
-    exit 1
+
+# Python 3.13+ requires --break-system-packages flag or virtual environment
+PYTHON_VERSION_MAJOR=$(python3 -c 'import sys; print(sys.version_info.major)')
+PYTHON_VERSION_MINOR=$(python3 -c 'import sys; print(sys.version_info.minor)')
+log "Python version: $PYTHON_VERSION_MAJOR.$PYTHON_VERSION_MINOR"
+
+PIP_FLAGS="--upgrade"
+if [ "$PYTHON_VERSION_MAJOR" -eq 3 ] && [ "$PYTHON_VERSION_MINOR" -ge 11 ]; then
+    echo "Python 3.11+ detected, using --break-system-packages flag"
+    PIP_FLAGS="--upgrade --break-system-packages"
+    log "Using --break-system-packages for pip"
+fi
+
+if ! sudo pip3 install $PIP_FLAGS pymavlink MAVProxy 2>&1 | tee -a "$LOG_FILE"; then
+    echo -e "${RED}Failed to install MAVProxy with pip${NC}"
+    echo "Trying alternative installation method..."
+    log "ERROR: MAVProxy pip installation failed, trying apt"
+    
+    # Try installing from apt as fallback
+    if sudo apt-get install -y python3-pymavlink mavproxy >> "$LOG_FILE" 2>&1; then
+        echo -e "${YELLOW}Installed MAVProxy from apt package${NC}"
+        log "MAVProxy installed via apt"
+    else
+        echo -e "${RED}All installation methods failed${NC}"
+        echo "Check log file: $LOG_FILE"
+        log "ERROR: All MAVProxy installation methods failed"
+        exit 1
+    fi
 fi
 
 # Verify installation
@@ -110,7 +134,7 @@ fi
 
 echo -e "${GREEN}[4/8] Installing DroneKit for Python scripting...${NC}"
 log "Installing DroneKit"
-if ! sudo pip3 install dronekit dronekit-sitl >> "$LOG_FILE" 2>&1; then
+if ! sudo pip3 install $PIP_FLAGS dronekit dronekit-sitl 2>&1 | tee -a "$LOG_FILE"; then
     echo -e "${YELLOW}Warning: DroneKit installation had issues${NC}"
     log "WARNING: DroneKit installation failed"
 else
