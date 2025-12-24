@@ -34,6 +34,7 @@ echo ""
 echo "Note: You have hardware flow control (RTS/CTS) connected"
 echo ""
 echo "Starting MAVProxy..."
+echo "Using 57600 baud (same as Mission Planner default)"
 echo "If connection is successful, you should see heartbeat messages"
 echo ""
 echo "Test commands to try:"
@@ -44,10 +45,5 @@ echo ""
 echo "Press Ctrl+C to exit"
 echo ""
 
-# Try with hardware flow control first (since RTS/CTS is connected)
-echo "Attempting connection at 921600 baud with flow control..."
-echo "(If this fails, try: mavproxy.py --master=/dev/serial0 --baudrate=57600)"
-echo ""
-
-# Start MAVProxy with flow control enabled
-mavproxy.py --master=/dev/serial0 --baudrate=921600 --rtscts --aircraft MyCopter
+# Start with 57600 since that's what Mission Planner uses
+mavproxy.py --master=/dev/serial0 --baudrate=57600 --rtscts --aircraft MyCopter

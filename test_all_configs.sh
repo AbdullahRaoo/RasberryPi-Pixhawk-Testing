@@ -17,13 +17,14 @@ echo "Press Ctrl+C when you see heartbeat messages"
 echo ""
 
 # Configuration array: baudrate, flow_control_flag, description
+# Starting with 57600 since that's the Mission Planner default
 configs=(
-    "921600:--rtscts:921600 with hardware flow control (RTS/CTS)"
-    "921600::921600 without flow control"
+    "57600:--rtscts:57600 with hardware flow control (RTS/CTS)"
+    "57600::57600 without flow control"
     "115200:--rtscts:115200 with hardware flow control"
     "115200::115200 without flow control"
-    "57600:--rtscts:57600 with hardware flow control"
-    "57600::57600 without flow control"
+    "921600:--rtscts:921600 with hardware flow control"
+    "921600::921600 without flow control"
 )
 
 for config in "${configs[@]}"; do
