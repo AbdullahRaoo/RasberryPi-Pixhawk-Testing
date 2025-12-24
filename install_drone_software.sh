@@ -105,6 +105,14 @@ if [ "$PYTHON_VERSION_MAJOR" -eq 3 ] && [ "$PYTHON_VERSION_MINOR" -ge 11 ]; then
     log "Using --break-system-packages for pip"
 fi
 
+# Install dependencies first (future module is required by MAVProxy)
+echo "Installing MAVProxy dependencies..."
+if ! sudo pip3 install $PIP_FLAGS future lxml 2>&1 | tee -a "$LOG_FILE"; then
+    echo -e "${YELLOW}Warning: Some dependencies failed to install${NC}"
+    log "WARNING: MAVProxy dependency installation had issues"
+fi
+
+# Install MAVProxy and PyMAVLink
 if ! sudo pip3 install $PIP_FLAGS pymavlink MAVProxy 2>&1 | tee -a "$LOG_FILE"; then
     echo -e "${RED}Failed to install MAVProxy with pip${NC}"
     echo "Trying alternative installation method..."

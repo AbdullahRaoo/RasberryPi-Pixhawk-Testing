@@ -43,4 +43,4 @@ echo "Press Ctrl+C to exit"
 echo ""
 
 # Start MAVProxy with common settings
-mavproxy.py --master=/dev/serial0 --baudrate=921600 --aircraft MyCopter
+mavproxy.py --master=/dev/serial0 --baudrate=57600 --aircraft MyCopter
