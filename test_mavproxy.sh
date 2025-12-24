@@ -31,6 +31,8 @@ echo "Serial port found: /dev/serial0"
 ls -l /dev/serial0
 echo ""
 
+echo "Note: You have hardware flow control (RTS/CTS) connected"
+echo ""
 echo "Starting MAVProxy..."
 echo "If connection is successful, you should see heartbeat messages"
 echo ""
@@ -42,5 +44,10 @@ echo ""
 echo "Press Ctrl+C to exit"
 echo ""
 
-# Start MAVProxy with common settings
-mavproxy.py --master=/dev/serial0 --baudrate=57600 --aircraft MyCopter
+# Try with hardware flow control first (since RTS/CTS is connected)
+echo "Attempting connection at 921600 baud with flow control..."
+echo "(If this fails, try: mavproxy.py --master=/dev/serial0 --baudrate=57600)"
+echo ""
+
+# Start MAVProxy with flow control enabled
+mavproxy.py --master=/dev/serial0 --baudrate=921600 --rtscts --aircraft MyCopter
