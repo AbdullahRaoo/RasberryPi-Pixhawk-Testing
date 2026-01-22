@@ -12,6 +12,7 @@ if not hasattr(collections, 'MutableMapping'):
     collections.MutableMapping = collections.abc.MutableMapping
 
 from dronekit import connect
+from pymavlink import mavutil
 import time
 import sys
 import os
@@ -24,6 +25,18 @@ def main():
     try:
         vehicle = connect(CONNECTION_STRING, wait_ready=True, baud=BAUD_RATE)
         print("✓ Connected")
+        
+        # FORCE REQUEST RC CHANNELS
+        # MAV_DATA_STREAM_RC_CHANNELS = 3
+        print("Requesting RC Data Stream...")
+        msg = vehicle.message_factory.request_data_stream_encode(
+            0, 0,
+            mavutil.mavlink.MAV_DATA_STREAM_RC_CHANNELS,
+            2, # Rate (Hz)
+            1  # Start
+        )
+        vehicle.send_mavlink(msg)
+        
     except Exception as e:
         print(f"✗ Failed: {e}")
         return
