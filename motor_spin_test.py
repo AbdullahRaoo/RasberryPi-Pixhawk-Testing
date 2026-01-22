@@ -108,7 +108,8 @@ def main():
     
     for i in range(1, 5):
         print(f"\n[?] Testing Motor {i}")
-        spin_motor(vehicle, i, duration_sec=2, throttle_pct=5)
+        # Try 15% throttle as requested by user
+        spin_motor(vehicle, i, duration_sec=2, throttle_pct=15)
         
     print("\nDone. If any motor didn't spin:")
     print("1. Check ESC Signal wiring.")
