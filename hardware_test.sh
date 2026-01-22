@@ -15,11 +15,17 @@ echo ""
 
 # Test 1: Check if serial port exists and is accessible
 echo -e "${BLUE}[1] Checking serial port access...${NC}"
+
 if [ -e /dev/serial0 ]; then
-    echo -e "${GREEN}✓ /dev/serial0 exists${NC}"
-    ls -l /dev/serial0
+    SERIAL_PORT="/dev/serial0"
+    echo -e "${GREEN}✓ Found /dev/serial0${NC}"
+    ls -l $SERIAL_PORT
+elif [ -e /dev/ttyS0 ]; then
+    SERIAL_PORT="/dev/ttyS0"
+    echo -e "${GREEN}✓ Found /dev/ttyS0 (using as fallback)${NC}"
+    ls -l $SERIAL_PORT
 else
-    echo -e "${RED}✗ /dev/serial0 not found${NC}"
+    echo -e "${RED}✗ No serial port found (/dev/serial0 or /dev/ttyS0)${NC}"
     exit 1
 fi
 echo ""
@@ -34,10 +40,10 @@ for BAUD in 57600 115200 921600; do
     echo -e "${YELLOW}Testing at $BAUD baud...${NC}"
     
     # Configure serial port
-    stty -F /dev/serial0 $BAUD raw -echo -echoe -echok 2>/dev/null
+    stty -F $SERIAL_PORT $BAUD raw -echo -echoe -echok 2>/dev/null
     
     # Try to read any data for 3 seconds
-    timeout 3 cat /dev/serial0 > /tmp/serial_raw_$BAUD 2>&1 &
+    timeout 3 cat $SERIAL_PORT > /tmp/serial_raw_$BAUD 2>&1 &
     PID=$!
     
     # Show spinner while waiting
@@ -64,7 +70,7 @@ for BAUD in 57600 115200 921600; do
         echo -e "${BLUE}[3] Checking if it's valid MAVLink data...${NC}"
         echo "Looking for MAVLink magic bytes (FD, FE)..."
         
-        timeout 5 cat /dev/serial0 | xxd | head -20
+        timeout 5 cat $SERIAL_PORT | xxd | head -20
         
         echo ""
         echo -e "${YELLOW}If you see 'FD' or 'FE' bytes above, it's MAVLink!${NC}"
@@ -72,7 +78,7 @@ for BAUD in 57600 115200 921600; do
         echo "Recommended next steps:"
         echo "  1. Your wiring appears correct"
         echo "  2. Use MAVProxy at $BAUD baud:"
-        echo "     mavproxy.py --master=/dev/serial0 --baudrate=$BAUD --rtscts"
+        echo "     mavproxy.py --master=$SERIAL_PORT --baudrate=$BAUD --rtscts"
         echo ""
         exit 0
     else

@@ -17,8 +17,14 @@ def test_connection():
     print()
     
     # Connection string for Raspberry Pi serial
-    connection_string = '/dev/serial0'
-    baud_rate = 921600
+    # Fallback to ttyS0 if serial0 doesn't exist
+    import os
+    if os.path.exists('/dev/serial0'):
+        connection_string = '/dev/serial0'
+    else:
+        connection_string = '/dev/ttyS0'
+        
+    baud_rate = 57600
     
     print(f"Connecting to vehicle on {connection_string}")
     print(f"Baud rate: {baud_rate}")
