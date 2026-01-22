@@ -81,6 +81,25 @@ def main():
     print("\nStarting Test - Keep hands clear!")
     time.sleep(1)
 
+    # Force Arming (Requested by user)
+    print("Arming motors... (Safety precaution: Runs at IDLE speed if successful)")
+    vehicle.mode = VehicleMode("STABILIZE")
+    vehicle.armed = True
+    
+    # Wait for arming
+    start = time.time()
+    while not vehicle.armed:
+        print(" Waiting for arming...")
+        time.sleep(1)
+        if time.time() - start > 10:
+            print("✗ FAILED TO ARM! (Are pre-arm checks failing?)")
+            print("  Check: RC Not Found? GPS Bad?")
+            print("  Trying to force Motor Test anyway...")
+            break
+            
+    if vehicle.armed:
+        print("✓ ARMED! (DANGER: Motors are live)")
+
     # Standard X-Quad Motor Order:
     # 1: Front Right (CCW)
     # 2: Rear Left   (CCW)
