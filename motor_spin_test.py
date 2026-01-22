@@ -20,7 +20,7 @@ import time
 CONNECTION_STRING = '/dev/serial0'
 BAUD_RATE = 57600
 
-def spin_motor(vehicle, motor_num, duration_sec=1, throttle_pct=5):
+def spin_motor(vehicle, motor_num, duration_sec=1, throttle_pct=15):
     """
     Spins a specific motor using MAV_CMD_DO_MOTOR_TEST
     motor_num: 1-4 (Standard ArduCopter order)
