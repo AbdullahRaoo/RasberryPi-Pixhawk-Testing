@@ -6,6 +6,12 @@ Connects to the Pixhawk and prints vital data in real-time.
 SAFE FOR INDOOR USE: Does NOT arm the motors.
 """
 
+import collections
+import collections.abc
+# Monkey patch for Python 3.10+ compatibility with DroneKit
+if not hasattr(collections, 'MutableMapping'):
+    collections.MutableMapping = collections.abc.MutableMapping
+
 from dronekit import connect
 import time
 import sys

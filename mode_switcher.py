@@ -6,6 +6,12 @@ Demonstrates sending commands to the drone.
 SAFE: Only changes Flight Mode. Does NOT arm motors.
 """
 
+import collections
+import collections.abc
+# Monkey patch for Python 3.10+ compatibility with DroneKit
+if not hasattr(collections, 'MutableMapping'):
+    collections.MutableMapping = collections.abc.MutableMapping
+
 from dronekit import connect, VehicleMode
 import time
 import sys
