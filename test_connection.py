@@ -4,6 +4,12 @@ Test script for Pixhawk CubeBlack connection via DroneKit
 Run with: python3 test_connection.py
 """
 
+import collections
+import collections.abc
+# Monkey patch for Python 3.10+ compatibility with DroneKit
+if not hasattr(collections, 'MutableMapping'):
+    collections.MutableMapping = collections.abc.MutableMapping
+
 from dronekit import connect, VehicleMode, LocationGlobal
 import time
 import sys
