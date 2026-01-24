@@ -17,6 +17,12 @@ WORKFLOW:
 6. Return to Launch (RTL)
 """
 
+import collections
+import collections.abc
+# Monkey patch for Python 3.10+ compatibility with DroneKit
+if not hasattr(collections, 'MutableMapping'):
+    collections.MutableMapping = collections.abc.MutableMapping
+
 from dronekit import connect, VehicleMode, LocationGlobalRelative
 import time
 import math
