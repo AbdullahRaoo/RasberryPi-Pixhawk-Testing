@@ -26,8 +26,9 @@ CONNECTION_STRING = '/dev/serial0'
 BAUD_RATE = 57600
 
 def main():
-    print("Connecting...")
-    vehicle = connect(CONNECTION_STRING, wait_ready=True, baud=BAUD_RATE)
+    print("Connecting... (This may take up to 2 minutes)")
+    # Increased timeout to 120s to handle slow parameter download
+    vehicle = connect(CONNECTION_STRING, wait_ready=True, baud=BAUD_RATE, timeout=120)
     print("✓ Connected")
 
     print("\n" + "="*50)

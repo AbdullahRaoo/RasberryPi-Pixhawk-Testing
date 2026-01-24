@@ -46,8 +46,9 @@ def get_location_metres(original_location, dNorth, dEast):
     return LocationGlobalRelative(newlat, newlon, original_location.alt)
 
 def main():
-    print("Connecting to Pixhawk...")
-    vehicle = connect(CONNECTION_STRING, wait_ready=True, baud=BAUD_RATE)
+    print("Connecting to Pixhawk... (This may take up to 2 minutes)")
+    # Increased timeout to 120s to handle slow parameter download
+    vehicle = connect(CONNECTION_STRING, wait_ready=True, baud=BAUD_RATE, timeout=120)
     print("✓ Connected")
 
     # PRE-FLIGHT CHECKS
