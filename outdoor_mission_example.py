@@ -12,7 +12,7 @@ WORKFLOW:
 1. Connect
 2. Wait for Pilot to switch to GUIDED
 3. Arm
-4. Takeoff to 1m
+4. Takeoff to 3m
 5. Fly to a Square pattern
 6. Return to Launch (RTL)
 """
@@ -76,27 +76,27 @@ def main():
         vehicle.armed = True
         while not vehicle.armed: time.sleep(1)
         
-        print("Taking off to 1 meter...")
-        vehicle.simple_takeoff(1)
+        print("Taking off to 3 meters...")
+        vehicle.simple_takeoff(3)
         
         while True:
             alt = vehicle.location.global_relative_frame.alt
             print(f" Altitude: {alt:.1f}m")
-            if alt >= 0.9: break  # 90% of 1m target
+            if alt >= 2.8: break  # 95% of 3m target
             time.sleep(1)
 
         # 3. SQUARE PATTERN
         print("\nFlying Square Pattern...")
         base_loc = vehicle.location.global_relative_frame
         
-        # Waypoints: North 2m, East 2m, South 2m, West 2m
-        moves = [(2, 0), (0, 2), (-2, 0), (0, -2)]
+        # Waypoints: North 6m, East 6m, South 6m, West 6m
+        moves = [(6, 0), (0, 6), (-6, 0), (0, -6)]
         
         for i, (north, east) in enumerate(moves):
             target = get_location_metres(vehicle.location.global_relative_frame, north, east)
             print(f" Going to Waypoint {i+1} (North:{north}, East:{east})...")
             vehicle.simple_goto(target)
-            time.sleep(5) # Give time to fly 2m
+            time.sleep(10) # Give time to fly 6m
             
             # Safety Check
             if vehicle.mode.name != 'GUIDED': raise Exception("Pilot Override")
